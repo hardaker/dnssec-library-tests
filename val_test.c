@@ -1,6 +1,8 @@
 #include <sys/time.h>
 #include <validator/validator-config.h>
 #include <validator/validator.h>
+#include <unistd.h>
+#include <stdlib.h>
 
 #define LOOKUP_NAME "www.dnssec-tools.org"
 #define LOOKUP_TYPE "A"
@@ -27,6 +29,7 @@ main(int argc, char **argv) {
 
     if (!val_isvalidated(val_status)) {
         fprintf(stderr, "something very wrong; not validated response returned\n");
+        exit(1);
     }
     fprintf(stderr, "validated response returned\n");
 
