@@ -6,13 +6,11 @@
  */
 
 #include <ldns/ldns.h>
+#include <sys/time.h>
+#include <unistd.h>
+#include <stdlib.h>
 
-static int
-usage(FILE *fp, char *prog) {
-        fprintf(fp, "%s domain\n", prog);
-        fprintf(fp, "  print out the mx for domain\n");
-        return 0;
-}
+#define LOOKUP_NAME "www.dnssec-tools.org"
 
 int
 main(int argc, char *argv[])
@@ -23,25 +21,25 @@ main(int argc, char *argv[])
         ldns_rr_list *mx;
         ldns_status s;
         
+        struct timeval starttime, endtime;
+        int i;
+
+        int number = 100000;
+
+        if (argc > 1) {
+            number = atoi(argv[1]);
+        }
+
         p = NULL;
         mx = NULL;
         domain = NULL;
         res = NULL;
         
-        if (argc != 2) {
-                usage(stdout, argv[0]);
-                exit(EXIT_FAILURE);
-        } else {
-                /* create a rdf from the command line arg */
-                domain = ldns_dname_new_frm_str(argv[1]);
-                if (!domain) {
-                        usage(stdout, argv[0]);
-                        exit(EXIT_FAILURE);
-                }
-        }
+        /* create a rdf from the command line arg */
+        domain = ldns_dname_new_frm_str(LOOKUP_NAME);
 
         /* create a new resolver from /etc/resolv.conf */
-        s = ldns_resolver_new_frm_file(&res, NULL);
+        s = ldns_resolver_new_frm_file(&res, "resolv.conf");
 
         if (s != LDNS_STATUS_OK) {
                 exit(EXIT_FAILURE);
@@ -52,7 +50,7 @@ main(int argc, char *argv[])
          */
         p = ldns_resolver_query(res,
                                 domain,
-                                LDNS_RR_TYPE_MX,
+                                LDNS_RR_TYPE_A,
                                 LDNS_RR_CLASS_IN,
                                 LDNS_RD);
 
@@ -65,7 +63,7 @@ main(int argc, char *argv[])
                  * packet
                  */
                 mx = ldns_pkt_rr_list_by_type(p,
-                                              LDNS_RR_TYPE_MX,
+                                              LDNS_RR_TYPE_A,
                                               LDNS_SECTION_ANSWER);
                 if (!mx) {
                         fprintf(stderr, 
@@ -81,6 +79,10 @@ main(int argc, char *argv[])
                 }
         }
         ldns_pkt_free(p);
+
+
+
+        
         ldns_resolver_deep_free(res);
         return 0;
 }
