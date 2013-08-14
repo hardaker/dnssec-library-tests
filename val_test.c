@@ -43,6 +43,7 @@ main(int argc, char **argv) {
     // with context
     val_create_context(NULL, &context);
     fprintf(stderr, "starting %d queries with a context....\n", number);
+    retval = val_getaddrinfo(context, LOOKUP_NAME, service, &hints, &val_ainfo, &val_status); // fully init it
     // actually run the tests, timing them
     starttime = time(&starttime);
     for (i = 0; i < number; i++) {
