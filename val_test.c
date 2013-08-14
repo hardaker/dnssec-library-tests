@@ -13,7 +13,7 @@ main(int argc, char **argv) {
     struct addrinfo *val_ainfo = NULL;
     char           *service = NULL;
     struct addrinfo hints;
-    time_t starttime, endtime;
+    struct timeval starttime, endtime;
     int i;
     val_context_t *context;
 
@@ -32,26 +32,26 @@ main(int argc, char **argv) {
 
     // without a context
     fprintf(stderr, "starting %d queries without context....\n", number);
+
     // actually run the tests, timing them
-    starttime = time(&starttime);
+    gettimeofday(&starttime, NULL);
     for (i = 0; i < number; i++) {
         retval = val_getaddrinfo(NULL, LOOKUP_NAME, service, &hints, &val_ainfo, &val_status);
     }
-    endtime = time(&endtime);
-    fprintf(stderr, "time elapsed for %d queries: %f\n", number, difftime(endtime, starttime));
+    gettimeofday(&endtime, NULL);
+    fprintf(stderr, "time elapsed (ms) for %d queries: %d\n", number, timeofday_diff(&starttime, &endtime));
 
     // with context
     val_create_context(NULL, &context);
     fprintf(stderr, "starting %d queries with a context....\n", number);
     retval = val_getaddrinfo(context, LOOKUP_NAME, service, &hints, &val_ainfo, &val_status); // fully init it
+
     // actually run the tests, timing them
-    starttime = time(&starttime);
+    gettimeofday(&starttime, NULL);
     for (i = 0; i < number; i++) {
         retval = val_getaddrinfo(context, LOOKUP_NAME, service, &hints, &val_ainfo, &val_status);
     }
-    endtime = time(&endtime);
-    
-
-    fprintf(stderr, "time elapsed for %d queries: %f\n", number, difftime(endtime, starttime));
+    gettimeofday(&endtime, NULL);
+    fprintf(stderr, "time elapsed (ms) for %d queries: %d\n", number, timeofday_diff(&starttime, &endtime));
 }
 

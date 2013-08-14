@@ -1,2 +1,4 @@
+UTILS=test_utils.c
+
 val_test: val_test.c
-	gcc -o $@ $< -lval-threads -lsres -lpthread -lcrypto -lssl
+	gcc -o $@ $(UTILS) $(CFLAGS) $< -lval-threads -lsres -lpthread -lcrypto -lssl
