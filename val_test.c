@@ -33,6 +33,8 @@ main(int argc, char **argv) {
     }
     fprintf(stderr, "validated response returned\n");
 
+    // Note: this is without proper memory freeing
+
     // without a context
     fprintf(stderr, "starting %d queries without context....\n", number);
 

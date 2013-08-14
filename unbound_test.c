@@ -67,6 +67,7 @@ int main(int argc, char **argv)
         }
         fprintf(stderr, "validated response returned\n");
 
+        // Note: this is without proper memory freeing
         fprintf(stderr, "starting %d queries without context....\n", number);
         gettimeofday(&starttime, NULL);
         for (i = 0; i < number; i++) {
