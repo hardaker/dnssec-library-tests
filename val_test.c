@@ -15,7 +15,8 @@ main(int argc, char **argv) {
     struct addrinfo hints;
     time_t starttime, endtime;
     int i;
-    
+    val_context_t *context;
+
     if (argc > 1) {
         number = atoi(argv[1]);
     }
@@ -29,14 +30,27 @@ main(int argc, char **argv) {
     }
     fprintf(stderr, "validated response returned\n");
 
-    fprintf(stderr, "starting %d queries....\n", number);
+    // without a context
+    fprintf(stderr, "starting %d queries without context....\n", number);
     // actually run the tests, timing them
     starttime = time(&starttime);
     for (i = 0; i < number; i++) {
         retval = val_getaddrinfo(NULL, LOOKUP_NAME, service, &hints, &val_ainfo, &val_status);
     }
     endtime = time(&endtime);
+    fprintf(stderr, "time elapsed for %d queries: %f\n", number, difftime(endtime, starttime));
 
+    // with context
+    val_create_context(NULL, &context);
+    fprintf(stderr, "starting %d queries with a context....\n", number);
+    // actually run the tests, timing them
+    starttime = time(&starttime);
+    for (i = 0; i < number; i++) {
+        retval = val_getaddrinfo(context, LOOKUP_NAME, service, &hints, &val_ainfo, &val_status);
+    }
+    endtime = time(&endtime);
+    
 
     fprintf(stderr, "time elapsed for %d queries: %f\n", number, difftime(endtime, starttime));
 }
+
